@@ -120,6 +120,35 @@ input:focus {
     border-width: 1px;
 }
 
+.remindersTextareaContainer {
+    margin: 5px 5px 690px 5px;
+}
+
+.remindersTextarea {
+    min-width: 100%;
+    width: 100%;
+    max-width: 100%;
+    height: 100px;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.remindersTextarea:focus {
+    outline: solid;
+    outline-width: 2px;
+    outline-color: rgb(98, 188, 230);
+}
+
 ::-webkit-datetime-edit, ::-webkit-datetime-edit-fields-wrapper, ::-webkit-datetime-edit-text, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-week-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-ampm-field {
     display: none;
+}
+
+::-webkit-scrollbar {
+    background-color: transparent;
+    width: 13px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgb(98, 188, 230);
+    border-radius: 5px;
 }
