@@ -1,0 +1,15 @@
+{
+  "name": "clock-reminder-app-electron",
+  "version": "1.0.0",
+  "description": "Clock and Remiders always-on-top app.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "author": "Patty",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^30.0.8"
+  }
+}

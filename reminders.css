@@ -1,0 +1,125 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+    background-color: rgb(73, 78, 97);
+}
+
+p {
+    font-size: 18px;
+    font-weight: 500;
+    color: white;
+}
+
+h1 {
+    width: fit-content;
+    margin: 5px 0 5px 0;
+    color: white;
+}
+
+input {
+    border: solid;
+    border-width: 3px;
+    border-color: rgb(73, 78, 97);
+    border-top-color: rgb(73, 78, 97);
+}
+
+input:focus {
+    outline: none;
+    border: solid;
+    border-width: 3px;
+    border-color: rgb(98, 188, 230);
+}
+
+#container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin: 10px;
+}
+
+#createReminderContainer {
+    display: flex;
+    align-items: center;
+}
+
+#addReminder {
+    height: 30px;
+    width: 150px;
+    border-radius: 7px;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+    margin: 0 5px;
+}
+
+#reminderDate {
+    display: flex;
+    width: 30px;
+    height: 30px;
+
+    border-radius: 7px;
+    margin: 0 5px;
+    text-align: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+#reminderDate::-webkit-calendar-picker-indicator {
+    height: 30px;
+    padding: 5px;
+    margin: 12px 0 0 0;
+}
+
+#inputTime {
+    width: 60px;
+    height: 30px;
+    border-radius: 7px;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+    margin: 0 5px;
+}
+
+#addReminderBtn {
+    height: 30px;
+    min-width: 30px;
+    width: fit-content;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 5px;
+    padding: 0 3px;
+}
+
+#upcomingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.reminderDiv {
+    display: flex;
+    flex-direction: row;
+    margin: 5px;
+    font-size: 18px;
+    font-weight: 500;
+    color: white;
+}
+
+.deleteReminderBtn {
+    margin: 0 7px 0 7px;
+    padding: 0 3px 0 3px;
+    font-size: 16px;
+    font-weight: 500;
+    border: solid;
+    border-radius: 2px;
+    background-color: rgb(98, 188, 230);
+    border-width: 1px;
+}
+
+::-webkit-datetime-edit, ::-webkit-datetime-edit-fields-wrapper, ::-webkit-datetime-edit-text, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-week-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-ampm-field {
+    display: none;
+}
