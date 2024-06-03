@@ -3,6 +3,7 @@ const path = require('path') // fix  UnhandledPromiseRejectionWarning: Reference
 
 let mainDisplay = null;
 let win;
+let remindersWin;
 
 const createWindow = () => {
     win = new BrowserWindow({
@@ -28,6 +29,8 @@ const createWindow = () => {
     win.setPosition(mainDisplayWidth - 1000, 0);
 
     win.setIgnoreMouseEvents(true, { forward: true });
+
+    win.webContents.toggleDevTools(true);
   
     win.loadFile('index.html')
 
@@ -59,8 +62,8 @@ app.whenReady().then(() => {
   createWindow()
 
   //Noti
-  ipcMain.on('change-div-text', (event, text) => {
-    win.webContents.send('update-div', text);
+  ipcMain.on('change-div-text', (event, p) => {
+    win.webContents.send('update-div', p);
   });
 
   app.on('activate', () => {
@@ -73,7 +76,7 @@ app.on('window-all-closed', () => {
 })
 
 const createRemindersWindow = () => {
-  const remindersWin = new BrowserWindow({
+  remindersWin = new BrowserWindow({
     width: 600,
     height: 800,
     webPreferences: {
@@ -90,9 +93,16 @@ const createRemindersWindow = () => {
 
   remindersWin.setAlwaysOnTop(true);
 
+  win.webContents.send('remove-reminder-p')
+
   remindersWin.loadFile('reminders.html');
 }
 
 ipcMain.handle('create-reminders-window', () => {
   createRemindersWindow()
+})
+
+ipcMain.on('remove-reminder-p', (p, pId) => {
+  console.log('main log');
+  win.webContents.send('remove-reminder-p-main', p, pId)
 })

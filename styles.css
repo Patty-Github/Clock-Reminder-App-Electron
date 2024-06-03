@@ -46,5 +46,13 @@
 }
 
 #reminderNotificationDiv {
+    display: flex;
+    flex-direction: row;
     cursor: default;
+}
+
+#reminderNotificationDiv p {
+    margin: 0 5px;
+    -webkit-user-select: none;
+    user-select: none;
 }

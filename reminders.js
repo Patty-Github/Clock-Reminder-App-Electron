@@ -243,33 +243,53 @@ function notifyReminder() {
         notificationAudio.volume = 0.4;
 
         if(timeDifference < 1 && !todayReminderDiv.classList.contains("0notified")) {
-            console.log("Reminder is now")
+            //console.log("Reminder is now")
             todayReminderDiv.classList.add("0notified");
-            window.electronAPI.sendChangeDivText(todayReminder.title + ' Now');
+            let p = todayReminder.title + ' Now';
+            window.electronAPI.sendChangeDivText(p, todayReminderDiv.id);
             notificationAudio.play();
+            setTimeout(() => removeNotification(p, todayReminderDiv.id), 5000);
         } else if(timeDifference < 300000 && !todayReminderDiv.classList.contains("5notified") && !todayReminderDiv.classList.contains("0notified")) { // < 5 mins
             console.log('Reminder is 5 minutes away');
             todayReminderDiv.classList.add("5notified");
-            window.electronAPI.sendChangeDivText(todayReminder.title + ' In 5 Minutes');
+            let p = todayReminder.title + ' Now';
+            window.electronAPI.sendChangeDivText(p);
             notificationAudio.play();
-            setTimeout(removeNotification, 10000);
+            //setTimeout(removeNotification, 10000);
         } else if(timeDifference < 1800000 && !todayReminderDiv.classList.contains("30notified") && !todayReminderDiv.classList.contains("5notified") && !todayReminderDiv.classList.contains("0notified")) { // < 30 mins
             console.log("Reminder is 30 minutes away")
             todayReminderDiv.classList.add("30notified");
             window.electronAPI.sendChangeDivText(todayReminder.title + ' In 30 Minutes');
             notificationAudio.play();
-            setTimeout(removeNotification, 10000);
+            //setTimeout(removeNotification, 10000);
         } else if(timeDifference < 3600000 && !todayReminderDiv.classList.contains("60notified") && !todayReminderDiv.classList.contains("30notified") && !todayReminderDiv.classList.contains("5notified") && !todayReminderDiv.classList.contains("0notified")) { // < an hour
             console.log("Reminder is 1 hour away")
             todayReminderDiv.classList.add("60notified");
             window.electronAPI.sendChangeDivText(todayReminder.title + ' In 1 Hour');
             notificationAudio.play();
-            setTimeout(removeNotification, 10000);
+            //setTimeout(removeNotification, 10000);
         } 
     });
     setTimeout(notifyReminder, 1000);
 }
 notifyReminder();
+
+window.addEventListener('beforeunload', () => {
+
+    // renderer to main
+    // delete p via ID
+
+
+})
+
+function removeNotification(p, pId) {
+
+    // reminders > main > renderer
+    // delete p via ID
+    console.log('removing');
+    window.remindersDiv.removeReminderP(p, pId)
+
+}
 
 function saveReminderClasses() {
     let reminderClassNames = {};
@@ -311,13 +331,11 @@ function loadReminderClasses() {
     }
 }
 
-function removeNotification() {
-    window.electronAPI.sendChangeDivText('')
-}
-
 
 // Save classes when notifyReminder() is called
 // Have reminders window always open, button just shows it.
 // have notes at the bottom.
 // if time < 0 move to todayReminders
+// change from today to < 24 hours (if reminder is at midnight it won't notify)
 // add settings for font size, volume
+// change removeNotification to remove the <p> ID. make notifyReminder create a <p> with an ID.

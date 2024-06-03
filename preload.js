@@ -10,6 +10,11 @@ contextBridge.exposeInMainWorld('winMouseEvents', {
 });
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  sendChangeDivText: (text) => ipcRenderer.send('change-div-text', text),
-  onUpdateDiv: (callback) => ipcRenderer.on('update-div', (event, text) => callback(text))
+  sendChangeDivText: (p, pId) => ipcRenderer.send('change-div-text', p, pId),
+  onUpdateDiv: (callback) => ipcRenderer.on('update-div', (event, p, pId) => callback(p, pId))
 });
+
+contextBridge.exposeInMainWorld('remindersDiv', {
+  removeReminderP: (p, pId) => ipcRenderer.send('remove-reminder-p', p, pId),
+  onRemoveReminderPMain: () => ipcRenderer.on('remove-reminder-p-main', (p, pId))
+})

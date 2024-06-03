@@ -81,11 +81,19 @@ reminderNotificationDiv.addEventListener('mouseleave', async () => {
 
 // add time offset ???????
 
-//reminder notification
-window.electronAPI.onUpdateDiv((text) => {
-    reminderNotificationDiv.innerText = text;
+window.electronAPI.onUpdateDiv((p, pId) => {
+    let para = document.createElement('p');
+    para.setAttribute('id', pId);
+    para.innerText = p;
+    reminderNotificationDiv.appendChild(para);
+
+    para.addEventListener('click', () => {
+        reminderNotificationDiv.removeChild(para);
+    })
 });
 
-reminderNotificationDiv.addEventListener('click', () => {
-    reminderNotificationDiv.innerHTML = '';
+window.remindersDiv.onRemoveReminderPMain((event, p, pId) => {
+    console.log('removed');
+    const pToDelete = document.getElementById(pId)
+    remindersDiv.removeChild(pToDelete);
 })
