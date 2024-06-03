@@ -92,7 +92,7 @@ window.electronAPI.onUpdateDiv((p, pId) => {
     })
 });
 
-window.remindersDiv.onRemoveReminderPMain((event, p, pId) => {
+window.remindersDiv.onRemoveReminderPMain((event, pId) => {
     console.log('removed');
     const pToDelete = document.getElementById(pId)
     remindersDiv.removeChild(pToDelete);

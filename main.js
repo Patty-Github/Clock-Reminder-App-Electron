@@ -102,7 +102,7 @@ ipcMain.handle('create-reminders-window', () => {
   createRemindersWindow()
 })
 
-ipcMain.on('remove-reminder-p', (p, pId) => {
-  console.log('main log');
-  win.webContents.send('remove-reminder-p-main', p, pId)
+ipcMain.on('remove-reminder-p', (pId) => {
+  console.log('pId: ' + pId);
+  win.webContents.send('remove-reminder-p-main', pId)
 })

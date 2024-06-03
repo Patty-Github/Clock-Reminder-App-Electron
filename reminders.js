@@ -248,7 +248,7 @@ function notifyReminder() {
             let p = todayReminder.title + ' Now';
             window.electronAPI.sendChangeDivText(p, todayReminderDiv.id);
             notificationAudio.play();
-            setTimeout(() => removeNotification(p, todayReminderDiv.id), 5000);
+            setTimeout(() => removeNotification(todayReminderDiv.id), 5000);
         } else if(timeDifference < 300000 && !todayReminderDiv.classList.contains("5notified") && !todayReminderDiv.classList.contains("0notified")) { // < 5 mins
             console.log('Reminder is 5 minutes away');
             todayReminderDiv.classList.add("5notified");
