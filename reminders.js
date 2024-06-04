@@ -91,7 +91,7 @@ function createReminder(title, date, time) {
         id: id
     })
 
-    console.log(reminders);
+    //console.log(reminders);
     saveReminder();
     moveReminder(id);
     reminders.sort(sortReminders)
@@ -137,6 +137,7 @@ function render() {
 }
 
 function deleteReminder(event) {
+    console.log("deleting reminder")
     const deleteButton = event.target;
     const deleteId = deleteButton.id;
 
@@ -160,6 +161,7 @@ function removeReminder(deleteId) {
             return true;
         }
     });
+    console.log(todayReminders);
 
     saveReminder();
     saveTodayReminder();
@@ -168,11 +170,12 @@ function removeReminder(deleteId) {
 function moveReminder(reminderId) {
     reminders = reminders.filter(function (reminder) {
         if(reminder.id === reminderId) {
-            const reminderDate = reminder.date;
-            const newDate = new Date();
-            const currentFullDate = newDate.toJSON().slice(0, 10);
+            let dateAndTime = reminder.date + " " + reminder.time;
+            let scheduledTime = new Date(dateAndTime);
+            let currentTime = new Date();
+            let timeDifference = scheduledTime - currentTime;
 
-            if(reminderDate <= currentFullDate) {
+            if(timeDifference <= 86400000) {
                 let reminderDiv = document.getElementById(reminderId);
                 todayContainer.insertAdjacentHTML('afterbegin', reminderDiv);
                 todayReminders.push({
@@ -204,24 +207,19 @@ function saveTodayReminder() {
 }
 
 function updateReminderDiv() {
-    let currentYear = String(new Date().getFullYear());
-    let currentMonth = String(new Date().getMonth() + 1);
-    let currentDay = String(new Date().getDate());
-
-    if(currentMonth < 10) {
-        currentMonth = '0' + currentMonth;
-    }
-
-    let currentFullDate = currentYear + '-' + currentMonth + '-' + currentDay;
-
     reminders.forEach((reminder) => {
-        if(reminder.date == currentFullDate) {
+        let dateAndTime = reminder.date + " " + reminder.time;
+        let scheduledTime = new Date(dateAndTime);
+        let currentTime = new Date();
+        let timeDifference = scheduledTime - currentTime;
+
+        if(timeDifference <= 86400000) {
             console.log("reminder is today");
             moveReminder(reminder.id);
         }
     })
 
-    setTimeout(updateReminderDiv, 10);
+    setTimeout(updateReminderDiv, 100);
 }
 updateReminderDiv();
 
@@ -240,34 +238,40 @@ function notifyReminder() {
         let todayReminderDiv = document.getElementById(todayReminder.id);
 
         const notificationAudio = new Audio('./audio/reminder-notification.mp3');
-        notificationAudio.volume = 0.4;
+        notificationAudio.volume = 0.75;
 
         if(timeDifference < 1 && !todayReminderDiv.classList.contains("0notified")) {
-            //console.log("Reminder is now")
+            console.log(timeDifference);
             todayReminderDiv.classList.add("0notified");
             let p = todayReminder.title + ' Now';
-            window.electronAPI.sendChangeDivText(p, todayReminderDiv.id);
+            let pId = todayReminderDiv.id;
+            window.electronAPI.sendChangeDivText(p, pId);
             notificationAudio.play();
-            setTimeout(() => removeNotification(todayReminderDiv.id), 5000);
+            //setTimeout(() => removeNotification(todayReminderDiv.id), 5000);
         } else if(timeDifference < 300000 && !todayReminderDiv.classList.contains("5notified") && !todayReminderDiv.classList.contains("0notified")) { // < 5 mins
-            console.log('Reminder is 5 minutes away');
+            console.log(timeDifference);
             todayReminderDiv.classList.add("5notified");
-            let p = todayReminder.title + ' Now';
-            window.electronAPI.sendChangeDivText(p);
+            let p = todayReminder.title + ' In 5 Minutes';
+            let pId = todayReminderDiv.id;
+            window.electronAPI.sendChangeDivText(p, pId);
             notificationAudio.play();
-            //setTimeout(removeNotification, 10000);
+            setTimeout(() => removeNotification(todayReminderDiv.id), 10000);
         } else if(timeDifference < 1800000 && !todayReminderDiv.classList.contains("30notified") && !todayReminderDiv.classList.contains("5notified") && !todayReminderDiv.classList.contains("0notified")) { // < 30 mins
-            console.log("Reminder is 30 minutes away")
+            console.log(timeDifference);
             todayReminderDiv.classList.add("30notified");
-            window.electronAPI.sendChangeDivText(todayReminder.title + ' In 30 Minutes');
+            let p = todayReminder.title + ' In 30 Minutes';
+            let pId = todayReminderDiv.id;
+            window.electronAPI.sendChangeDivText(p, pId);
             notificationAudio.play();
-            //setTimeout(removeNotification, 10000);
+            setTimeout(() => removeNotification(todayReminderDiv.id), 10000);
         } else if(timeDifference < 3600000 && !todayReminderDiv.classList.contains("60notified") && !todayReminderDiv.classList.contains("30notified") && !todayReminderDiv.classList.contains("5notified") && !todayReminderDiv.classList.contains("0notified")) { // < an hour
-            console.log("Reminder is 1 hour away")
+            console.log(timeDifference);
             todayReminderDiv.classList.add("60notified");
-            window.electronAPI.sendChangeDivText(todayReminder.title + ' In 1 Hour');
+            let p = todayReminder.title + ' In 1 Hour';
+            let pId = todayReminderDiv.id;
+            window.electronAPI.sendChangeDivText(p, pId);
             notificationAudio.play();
-            //setTimeout(removeNotification, 10000);
+            setTimeout(() => removeNotification(todayReminderDiv.id), 10000);
         } 
     });
     setTimeout(notifyReminder, 1000);
@@ -275,20 +279,13 @@ function notifyReminder() {
 notifyReminder();
 
 window.addEventListener('beforeunload', () => {
-
-    // renderer to main
-    // delete p via ID
-
-
+    todayReminders.forEach((todayReminder) => {
+        removeNotification(todayReminder.id)
+    })
 })
 
 function removeNotification(p, pId) {
-
-    // reminders > main > renderer
-    // delete p via ID
-    console.log('removing');
     window.remindersDiv.removeReminderP(p, pId)
-
 }
 
 function saveReminderClasses() {
@@ -331,11 +328,28 @@ function loadReminderClasses() {
     }
 }
 
+document.addEventListener('DOMContentLoaded', () => {  
+    const remindersTextarea = document.getElementById('remindersTextareaId');
+    const textSavedStatus = document.getElementById('textSavedStatus');
+    remindersTextarea.addEventListener('input', () => {
+        console.log('change');
+        textSavedStatus.textContent = 'Unsaved'
+        remindersTextarea.style.height = remindersTextarea.scrollHeight + 'px';
+    })
+});
+
 
 // Save classes when notifyReminder() is called
-// Have reminders window always open, button just shows it.
+// Have reminders window always open, button just shows it. (maybe. this was because it wasn't showing reminder when minimized)
 // have notes at the bottom.
-// if time < 0 move to todayReminders
-// change from today to < 24 hours (if reminder is at midnight it won't notify)
-// add settings for font size, volume
-// change removeNotification to remove the <p> ID. make notifyReminder create a <p> with an ID.
+// add settings for font size, volume, alwaysOnTop,
+// save to local .JSON file instead of localStorage
+
+// have reminders app open on launch.
+// have reminderButton switch skipTaskbar = false, minimise: false
+// remove frame
+// create new frame with only minimise tab
+// when minimise is clicked, skipTaskbar = true.
+
+// Fix
+// reminders refreshing (unsure if fixable, it is cleared from local storeage)

@@ -16,5 +16,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
 contextBridge.exposeInMainWorld('remindersDiv', {
   removeReminderP: (pId) => ipcRenderer.send('remove-reminder-p', pId),
-  onRemoveReminderPMain: (pId) => ipcRenderer.on('remove-reminder-p-main', (pId))
+  onRemoveReminder: (callback) => ipcRenderer.on('remove-reminder-p-main', callback)
 })

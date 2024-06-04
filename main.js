@@ -22,15 +22,14 @@ const createWindow = () => {
     mainDisplay = screen.getPrimaryDisplay();
     let mainDisplayDimensions = mainDisplay.workAreaSize;
     let mainDisplayWidth = mainDisplayDimensions.width;
-    console.log(mainDisplayWidth);
 
     win.setAlwaysOnTop(true, 'screen-saver');
 
     win.setPosition(mainDisplayWidth - 1000, 0);
 
-    win.setIgnoreMouseEvents(true, { forward: true });
+    //win.setIgnoreMouseEvents(true, { forward: true });
 
-    win.webContents.toggleDevTools(true);
+    //win.webContents.toggleDevTools(true);
   
     win.loadFile('index.html')
 
@@ -61,11 +60,6 @@ app.whenReady().then(() => {
 
   createWindow()
 
-  //Noti
-  ipcMain.on('change-div-text', (event, p) => {
-    win.webContents.send('update-div', p);
-  });
-
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
@@ -87,7 +81,6 @@ const createRemindersWindow = () => {
   mainDisplay = screen.getPrimaryDisplay();
   let mainDisplayDimensions = mainDisplay.workAreaSize;
   let mainDisplayWidth = mainDisplayDimensions.width;
-  console.log(mainDisplayWidth);
 
   remindersWin.setPosition(mainDisplayWidth - 600, 100);
 
@@ -102,7 +95,10 @@ ipcMain.handle('create-reminders-window', () => {
   createRemindersWindow()
 })
 
-ipcMain.on('remove-reminder-p', (pId) => {
-  console.log('pId: ' + pId);
+ipcMain.on('change-div-text', (event, p, pId) => {
+  win.webContents.send('update-div', p, pId);
+});
+
+ipcMain.on('remove-reminder-p', (event, pId) => {
   win.webContents.send('remove-reminder-p-main', pId)
 })

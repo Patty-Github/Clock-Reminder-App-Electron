@@ -62,7 +62,7 @@ remindersBtn.addEventListener('click', async () => {
     await window.remindersWindow.createRemindersWindow()
 })
 
-remindersBtn.addEventListener('mouseover', async () => {
+/*remindersBtn.addEventListener('mouseover', async () => {
     await window.winMouseEvents.ignoreMouseEventsFalse()
 })
 
@@ -77,23 +77,26 @@ reminderNotificationDiv.addEventListener('mouseover', async () => {
 
 reminderNotificationDiv.addEventListener('mouseleave', async () => {
     await window.winMouseEvents.ignoreMouseEventsTrue()
-})
+})*/
 
 // add time offset ???????
 
 window.electronAPI.onUpdateDiv((p, pId) => {
-    let para = document.createElement('p');
-    para.setAttribute('id', pId);
-    para.innerText = p;
-    reminderNotificationDiv.appendChild(para);
+    if(!document.getElementById(pId)){
+        let para = document.createElement('p');
+        para.setAttribute('id', pId);
+        para.innerText = p;
+        reminderNotificationDiv.appendChild(para);
 
-    para.addEventListener('click', () => {
-        reminderNotificationDiv.removeChild(para);
-    })
+        para.addEventListener('click', () => {
+            reminderNotificationDiv.removeChild(para);
+        })
+    }
 });
 
-window.remindersDiv.onRemoveReminderPMain((event, pId) => {
-    console.log('removed');
+window.remindersDiv.onRemoveReminder((event, pId) => {
     const pToDelete = document.getElementById(pId)
-    remindersDiv.removeChild(pToDelete);
+    if(pToDelete) {
+        reminderNotificationDiv.removeChild(pToDelete);
+    }
 })
