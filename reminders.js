@@ -253,7 +253,6 @@ function saveTodayReminder() {
 }
 
 function updateReminderDiv() {
-    console.log('updateReminderDiv()')
     reminders.forEach((reminder) => {
         let dateAndTime = reminder.date + " " + reminder.time;
         let scheduledTime = new Date(dateAndTime);
@@ -273,7 +272,6 @@ remindersBtn.addEventListener('click', addReminder);
 
 
 function notifyReminder() {
-    console.log('notifyReminder()')
     todayReminders.forEach((todayReminder) => {
         let dateAndTime = todayReminder.date + " " + todayReminder.time;
         let scheduledTime = new Date(dateAndTime);
@@ -333,20 +331,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const textSavedStatus = document.getElementById('textSavedStatus');
     const savedText = JSON.parse(localStorage.getItem('textarea'))
     remindersTextarea.style.height = remindersTextarea.scrollHeight + 'px';
+    let saveTimeout;
 
     if(savedText) {
         remindersTextarea.value = savedText;
     }
 
     remindersTextarea.addEventListener('input', () => {
+        clearTimeout(saveTimeout);
         textSavedStatus.textContent = 'Unsaved'
         remindersTextarea.style.height = 'auto';
         remindersTextarea.style.height = remindersTextarea.scrollHeight + 'px';
     })
 
     remindersTextarea.onblur = () => {
-        textSavedStatus.textContent = 'Saved'
         localStorage.setItem('textarea', JSON.stringify(remindersTextarea.value));
+        textSavedStatus.textContent = 'Saving'
+        saveTimeout = setTimeout(() => textSavedStatus.textContent = 'Saved', 10000)
     }
 });
 

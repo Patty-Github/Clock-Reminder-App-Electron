@@ -1,4 +1,5 @@
 console.log("Renderer JS Working")
+const container = document.getElementById('container')
 const clockText = document.getElementById("clockText");
 const dateText = document.getElementById("dateText");
 const remindersBtn = document.getElementById("remindersBtn");
@@ -58,26 +59,45 @@ function setWeekDay(i) {
     }
 }
 
+let mouseOverNoti = false;
+
 remindersBtn.addEventListener('click', async () => {
     await window.remindersWindow.createRemindersWindow()
 })
 
-/*remindersBtn.addEventListener('mouseover', async () => {
+remindersBtn.addEventListener('mouseover', async () => {
+    mouseOverNoti = true;
     await window.winMouseEvents.ignoreMouseEventsFalse()
 })
 
 remindersBtn.addEventListener('mouseleave', async () => {
-    console.log("Leave")
+    mouseOverNoti = false;
+    await window.winMouseEvents.ignoreMouseEventsTrue()
+})
+
+container.addEventListener('mouseover', async () => {
+    if(mouseOverNoti == false) {
+        await window.winMouseEvents.ignoreMouseEventsTrue()
+    }
+})
+
+clockText.addEventListener('mouseover', async () => {
+    await window.winMouseEvents.ignoreMouseEventsTrue()
+})
+
+dateText.addEventListener('mouseover', async () => {
     await window.winMouseEvents.ignoreMouseEventsTrue()
 })
 
 reminderNotificationDiv.addEventListener('mouseover', async () => {
+    mouseOverNoti = true;
     await window.winMouseEvents.ignoreMouseEventsFalse()
 })
 
 reminderNotificationDiv.addEventListener('mouseleave', async () => {
+    mouseOverNoti = false;
     await window.winMouseEvents.ignoreMouseEventsTrue()
-})*/
+})
 
 // add time offset ???????
 
@@ -89,6 +109,7 @@ window.electronAPI.onUpdateDiv((p, pId) => {
         reminderNotificationDiv.appendChild(para);
 
         para.addEventListener('click', () => {
+            mouseOverNoti = false;
             reminderNotificationDiv.removeChild(para);
         })
     }

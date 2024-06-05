@@ -1,5 +1,4 @@
 const { app, BrowserWindow, ipcMain, screen, Tray, Menu } = require('electron')
-const fs = require('node:fs')
 const path = require('path') // fix  UnhandledPromiseRejectionWarning: ReferenceError: path is not defined.
 
 let mainDisplay = null;
@@ -44,9 +43,9 @@ const createWindow = () => {
     })
 }
 
-if(process.platform==='darwin') {
-  app.dock.hide()
-}
+//if(process.platform==='darwin') {
+//  app.dock.hide()
+//}
 
 let tray;
 
@@ -55,7 +54,7 @@ app.whenReady().then(() => {
   tray = new Tray('images/begtodiffer.jpeg')
   const contextMenu = Menu.buildFromTemplate([
     { label: 'Settings', type: 'normal' },
-    { label: 'Quit', type: 'normal', click: () => {app.quit()} }
+    { label: 'Quit', type: 'normal', click: () => {app.quit();} }
   ])
   tray.setToolTip('Clock-Reminder-App')
   tray.setContextMenu(contextMenu)
@@ -78,7 +77,6 @@ const createRemindersWindow = () => {
     width: 600,
     height: 800,
     skipTaskbar: true,
-    closable: false,
     frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
@@ -102,11 +100,11 @@ const createRemindersWindow = () => {
 
 ipcMain.handle('create-reminders-window', () => {
   if(isRemindersWinMinimized == true) {
-    remindersWin.setSkipTaskbar(false);
+    //remindersWin.setSkipTaskbar(false);
     remindersWin.restore();
     isRemindersWinMinimized = false;
   } else if(isRemindersWinMinimized == false) {
-    remindersWin.setSkipTaskbar(true);
+    //remindersWin.setSkipTaskbar(true);
     remindersWin.minimize();
     isRemindersWinMinimized = true;
   }
