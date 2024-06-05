@@ -1,4 +1,4 @@
-Honestly spaghetti code but does the job. 
+Honestly spaghetti code but does the job. Created 24th May, last update 5th June.
 
 The clock (index.html/renderer.js/styles.css) is always on top in the top right of your screen.
 The date & time can be clicked through so that you can still close tabs and such. 
