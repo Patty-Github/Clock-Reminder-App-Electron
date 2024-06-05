@@ -29,7 +29,7 @@ const createWindow = () => {
 
     win.setPosition(mainDisplayWidth - 1000, 0);
 
-    //win.setIgnoreMouseEvents(true, { forward: true });
+    win.setIgnoreMouseEvents(true, { forward: true });
 
     //win.webContents.toggleDevTools(true);
   
