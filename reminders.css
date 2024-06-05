@@ -38,7 +38,35 @@ input:focus {
     display: flex;
     align-items: center;
     flex-direction: column;
-    margin: 10px;
+}
+
+#newFrame {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    /*background-color: rgb(26, 26, 26);*/
+    background-image: linear-gradient(rgb(36, 36, 36) 30%, rgb(73, 78, 97));
+    -webkit-app-region: drag;
+    padding: 0 0 10px 0;
+}
+#newFrame p {
+    padding: 5px 10px 5px 10px;
+}
+#minimizeBtn {
+    width: 34px;
+    height: 34px;
+    border-radius: 0;
+    text-align: center;
+    line-height: 34px;
+    font-size: 30px;
+    border: none;
+    color: white;
+    background-color: transparent;
+    -webkit-app-region: no-drag;
+}
+#newFrame button:hover {
+    font-size: 40px;
+    transition: all 0.05s ease;
 }
 
 #createReminderContainer {

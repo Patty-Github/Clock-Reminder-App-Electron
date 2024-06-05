@@ -1,9 +1,11 @@
 const { app, BrowserWindow, ipcMain, screen, Tray, Menu } = require('electron')
+const fs = require('node:fs')
 const path = require('path') // fix  UnhandledPromiseRejectionWarning: ReferenceError: path is not defined.
 
 let mainDisplay = null;
 let win;
 let remindersWin;
+let isRemindersWinMinimized = true;
 
 const createWindow = () => {
     win = new BrowserWindow({
@@ -60,6 +62,8 @@ app.whenReady().then(() => {
 
   createWindow()
 
+  createRemindersWindow()
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
@@ -73,6 +77,9 @@ const createRemindersWindow = () => {
   remindersWin = new BrowserWindow({
     width: 600,
     height: 800,
+    skipTaskbar: true,
+    closable: false,
+    frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
@@ -88,11 +95,21 @@ const createRemindersWindow = () => {
 
   win.webContents.send('remove-reminder-p')
 
+  remindersWin.minimize();
+
   remindersWin.loadFile('reminders.html');
 }
 
 ipcMain.handle('create-reminders-window', () => {
-  createRemindersWindow()
+  if(isRemindersWinMinimized == true) {
+    remindersWin.setSkipTaskbar(false);
+    remindersWin.restore();
+    isRemindersWinMinimized = false;
+  } else if(isRemindersWinMinimized == false) {
+    remindersWin.setSkipTaskbar(true);
+    remindersWin.minimize();
+    isRemindersWinMinimized = true;
+  }
 })
 
 ipcMain.on('change-div-text', (event, p, pId) => {

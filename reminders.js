@@ -3,6 +3,11 @@ const reminderTime = document.getElementById('inputTime');
 const remindersBtn = document.getElementById('addReminderBtn');
 const upcomingDiv = document.getElementById('upcomingContainer');
 const todayContainer = document.getElementById('todayContainer');
+const minimizeBtn = document.getElementById('minimizeBtn');
+
+minimizeBtn.addEventListener('click', async () => {
+    await window.remindersWindow.createRemindersWindow()
+})
 
 let reminders;
 const savedReminders = JSON.parse(localStorage.getItem("reminders"))
@@ -82,6 +87,7 @@ function addReminder() {
 }
 
 function createReminder(title, date, time) {
+    console.log('createReminder()')
     const id = "" + new Date().getTime();
 
     reminders.push({
@@ -91,7 +97,6 @@ function createReminder(title, date, time) {
         id: id
     })
 
-    //console.log(reminders);
     saveReminder();
     moveReminder(id);
     reminders.sort(sortReminders)
@@ -99,6 +104,7 @@ function createReminder(title, date, time) {
 }
 
 function render() {
+    console.log('render()')
     upcomingDiv.innerHTML = ''
 
     reminders.forEach(function (reminder) {
@@ -117,35 +123,74 @@ function render() {
         upcomingDiv.appendChild(reminderDiv);
     })
 
-    todayContainer.innerHTML = ''
+    const savedTodayContainerHTML = JSON.parse(localStorage.getItem('todayContainerHTML'));
+    todayContainer.innerHTML = savedTodayContainerHTML;
+    let counter = 0;
+    let newRemindersContainer = document.createElement('div');
 
-    todayReminders.forEach(function (todayRemidner) {
+    todayReminders.forEach(function (todayReminder) {
+        const oldReminderDiv = document.getElementById(todayReminder.id)
+        console.log(oldReminderDiv);
+
         const reminderDiv = document.createElement('div');
-        reminderDiv.setAttribute('id', todayRemidner.id);
+        reminderDiv.setAttribute('id', todayReminder.id);
         reminderDiv.setAttribute('class', 'reminderDiv');
-        reminderDiv.innerText = todayRemidner.title + ' | ' + todayRemidner.time + ' | ' + todayRemidner.date;
+        reminderDiv.innerText = todayReminder.title + ' | ' + todayReminder.time + ' | ' + todayReminder.date;
 
         const deleteButton = document.createElement('button');
         deleteButton.setAttribute('class', 'deleteReminderBtn');
         deleteButton.textContent = 'Delete';
         deleteButton.onclick = deleteReminder;
-        deleteButton.id = todayRemidner.id;
+        deleteButton.id = todayReminder.id;
         reminderDiv.appendChild(deleteButton);
 
-        todayContainer.appendChild(reminderDiv);
+        if(oldReminderDiv != null) {
+            console.log('not null')
+            if (oldReminderDiv.classList.contains('0notified')) {
+                reminderDiv.classList.add('0notified');
+            }
+            if (oldReminderDiv.classList.contains('5notified')) {
+                reminderDiv.classList.add('5notified');
+            }
+            if (oldReminderDiv.classList.contains('30notified')) {
+                reminderDiv.classList.add('30notified');
+            }
+            if (oldReminderDiv.classList.contains('60notified')) {
+                reminderDiv.classList.add('60notified');
+            }
+        }
+
+
+        newRemindersContainer.appendChild(reminderDiv);
+        counter++;
+        console.log(counter + '/' + todayReminders.length);
+        if(counter === todayReminders.length) {
+            todayContainer.innerHTML = '';
+            todayContainer.appendChild(newRemindersContainer);
+        }
     })
 }
+document.addEventListener('DOMContentLoaded', render);
+
+function saveTodayContainerHTML() {
+    localStorage.setItem('todayContainerHTML', JSON.stringify(todayContainer.innerHTML))
+}
+
+window.addEventListener('beforeunload', () => {
+    saveTodayContainerHTML()
+})
 
 function deleteReminder(event) {
-    console.log("deleting reminder")
+    console.log('deleteReminder()')
     const deleteButton = event.target;
     const deleteId = deleteButton.id;
 
     removeReminder(deleteId);
     render();
-}
+};
 
 function removeReminder(deleteId) {
+    console.log('removeReminder()')
     reminders = reminders.filter(function (reminder) {
         if(reminder.id === deleteId) {
             return false;
@@ -156,18 +201,19 @@ function removeReminder(deleteId) {
 
     todayReminders = todayReminders.filter(function (todayReminder) {
         if(todayReminder.id === deleteId) {
+            removeNotification(todayReminder.id)
             return false;
         } else {
             return true;
         }
     });
-    console.log(todayReminders);
 
     saveReminder();
     saveTodayReminder();
 }
 
 function moveReminder(reminderId) {
+    console.log('moveReminder()')
     reminders = reminders.filter(function (reminder) {
         if(reminder.id === reminderId) {
             let dateAndTime = reminder.date + " " + reminder.time;
@@ -207,6 +253,7 @@ function saveTodayReminder() {
 }
 
 function updateReminderDiv() {
+    console.log('updateReminderDiv()')
     reminders.forEach((reminder) => {
         let dateAndTime = reminder.date + " " + reminder.time;
         let scheduledTime = new Date(dateAndTime);
@@ -214,21 +261,19 @@ function updateReminderDiv() {
         let timeDifference = scheduledTime - currentTime;
 
         if(timeDifference <= 86400000) {
-            console.log("reminder is today");
             moveReminder(reminder.id);
         }
     })
 
     setTimeout(updateReminderDiv, 100);
 }
-updateReminderDiv();
-
-render();
+document.addEventListener('DOMContentLoaded', updateReminderDiv);
 
 remindersBtn.addEventListener('click', addReminder);
 
 
 function notifyReminder() {
+    console.log('notifyReminder()')
     todayReminders.forEach((todayReminder) => {
         let dateAndTime = todayReminder.date + " " + todayReminder.time;
         let scheduledTime = new Date(dateAndTime);
@@ -241,15 +286,12 @@ function notifyReminder() {
         notificationAudio.volume = 0.75;
 
         if(timeDifference < 1 && !todayReminderDiv.classList.contains("0notified")) {
-            console.log(timeDifference);
             todayReminderDiv.classList.add("0notified");
             let p = todayReminder.title + ' Now';
             let pId = todayReminderDiv.id;
             window.electronAPI.sendChangeDivText(p, pId);
             notificationAudio.play();
-            //setTimeout(() => removeNotification(todayReminderDiv.id), 5000);
         } else if(timeDifference < 300000 && !todayReminderDiv.classList.contains("5notified") && !todayReminderDiv.classList.contains("0notified")) { // < 5 mins
-            console.log(timeDifference);
             todayReminderDiv.classList.add("5notified");
             let p = todayReminder.title + ' In 5 Minutes';
             let pId = todayReminderDiv.id;
@@ -257,7 +299,6 @@ function notifyReminder() {
             notificationAudio.play();
             setTimeout(() => removeNotification(todayReminderDiv.id), 10000);
         } else if(timeDifference < 1800000 && !todayReminderDiv.classList.contains("30notified") && !todayReminderDiv.classList.contains("5notified") && !todayReminderDiv.classList.contains("0notified")) { // < 30 mins
-            console.log(timeDifference);
             todayReminderDiv.classList.add("30notified");
             let p = todayReminder.title + ' In 30 Minutes';
             let pId = todayReminderDiv.id;
@@ -265,7 +306,6 @@ function notifyReminder() {
             notificationAudio.play();
             setTimeout(() => removeNotification(todayReminderDiv.id), 10000);
         } else if(timeDifference < 3600000 && !todayReminderDiv.classList.contains("60notified") && !todayReminderDiv.classList.contains("30notified") && !todayReminderDiv.classList.contains("5notified") && !todayReminderDiv.classList.contains("0notified")) { // < an hour
-            console.log(timeDifference);
             todayReminderDiv.classList.add("60notified");
             let p = todayReminder.title + ' In 1 Hour';
             let pId = todayReminderDiv.id;
@@ -276,7 +316,7 @@ function notifyReminder() {
     });
     setTimeout(notifyReminder, 1000);
 }
-notifyReminder();
+document.addEventListener('DOMContentLoaded', notifyReminder)
 
 window.addEventListener('beforeunload', () => {
     todayReminders.forEach((todayReminder) => {
@@ -284,10 +324,50 @@ window.addEventListener('beforeunload', () => {
     })
 })
 
-function removeNotification(p, pId) {
-    window.remindersDiv.removeReminderP(p, pId)
+function removeNotification(pId) {
+    window.remindersDiv.removeReminderP(pId)
 }
 
+document.addEventListener('DOMContentLoaded', () => {  
+    const remindersTextarea = document.getElementById('remindersTextareaId');
+    const textSavedStatus = document.getElementById('textSavedStatus');
+    const savedText = JSON.parse(localStorage.getItem('textarea'))
+    remindersTextarea.style.height = remindersTextarea.scrollHeight + 'px';
+
+    if(savedText) {
+        remindersTextarea.value = savedText;
+    }
+
+    remindersTextarea.addEventListener('input', () => {
+        textSavedStatus.textContent = 'Unsaved'
+        remindersTextarea.style.height = 'auto';
+        remindersTextarea.style.height = remindersTextarea.scrollHeight + 'px';
+    })
+
+    remindersTextarea.onblur = () => {
+        textSavedStatus.textContent = 'Saved'
+        localStorage.setItem('textarea', JSON.stringify(remindersTextarea.value));
+    }
+});
+
+
+
+// add settings for font size, volume, alwaysOnTop,
+// save to local .JSON file instead of localStorage (maybe)
+
+
+// Fix
+// notification sound playing when render is called. (should be fixed with classlist).
+// reminders refreshing (unsure if fixable, it is cleared from local storage)
+
+
+
+
+
+
+
+
+/* OLD
 function saveReminderClasses() {
     let reminderClassNames = {};
     let todayReminderClassNames = {};
@@ -328,28 +408,4 @@ function loadReminderClasses() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {  
-    const remindersTextarea = document.getElementById('remindersTextareaId');
-    const textSavedStatus = document.getElementById('textSavedStatus');
-    remindersTextarea.addEventListener('input', () => {
-        console.log('change');
-        textSavedStatus.textContent = 'Unsaved'
-        remindersTextarea.style.height = remindersTextarea.scrollHeight + 'px';
-    })
-});
-
-
-// Save classes when notifyReminder() is called
-// Have reminders window always open, button just shows it. (maybe. this was because it wasn't showing reminder when minimized)
-// have notes at the bottom.
-// add settings for font size, volume, alwaysOnTop,
-// save to local .JSON file instead of localStorage
-
-// have reminders app open on launch.
-// have reminderButton switch skipTaskbar = false, minimise: false
-// remove frame
-// create new frame with only minimise tab
-// when minimise is clicked, skipTaskbar = true.
-
-// Fix
-// reminders refreshing (unsure if fixable, it is cleared from local storeage)
+*/
