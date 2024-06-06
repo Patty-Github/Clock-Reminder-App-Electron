@@ -53,7 +53,8 @@ app.whenReady().then(() => {
 
   tray = new Tray('images/begtodiffer.jpeg')
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'Settings', type: 'normal' },
+    { label: '+1px', type: 'normal', click: () => {win.webContents.send('update-font-size', 1); tray.popUpContextMenu(contextMenu)}},
+    { label: '-1px', type: 'normal', click: () => {win.webContents.send('update-font-size', -1); tray.popUpContextMenu(contextMenu)}},
     { label: 'Quit', type: 'normal', click: () => {app.quit();} }
   ])
   tray.setToolTip('Clock-Reminder-App')
@@ -66,6 +67,19 @@ app.whenReady().then(() => {
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+})
+
+let canQuit = false;
+
+app.on('before-quit', (event) => {
+  if(canQuit) {
+    return;
+  }
+
+  event.preventDefault();
+  canQuit = true;
+  setTimeout(() => {win.webContents.send('remove-reminder-p-main', pId)}, 100)
+  app.quit()
 })
 
 app.on('window-all-closed', () => {

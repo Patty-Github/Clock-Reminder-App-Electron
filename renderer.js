@@ -5,6 +5,30 @@ const dateText = document.getElementById("dateText");
 const remindersBtn = document.getElementById("remindersBtn");
 const reminderNotificationDiv = document.getElementById('reminderNotificationDiv');
 
+let fontSize = 16;
+const savedFontSize = JSON.parse(localStorage.getItem('font-size'));
+if(savedFontSize != null) {
+    console.log('not null')
+    fontSize = savedFontSize;
+    clockText.style.fontSize = fontSize + 'px';
+    dateText.style.fontSize = fontSize + 'px';
+} else if(savedFontSize == null) {
+    console.log('null')
+}
+
+window.clockFontSizeChange.onFontChange((value) => {
+    fontSize = fontSize + value;
+    console.log(fontSize);
+    clockText.style.fontSize = fontSize + 'px';
+    dateText.style.fontSize = fontSize + 'px';
+
+    saveFontSize(fontSize);
+})
+
+function saveFontSize(i) {
+    localStorage.setItem('font-size', JSON.stringify(i))
+}
+
 function updateTime() {
     const time = new Date();
     let weekday = time.getDay();

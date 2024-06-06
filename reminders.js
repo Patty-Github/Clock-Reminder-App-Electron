@@ -87,7 +87,6 @@ function addReminder() {
 }
 
 function createReminder(title, date, time) {
-    console.log('createReminder()')
     const id = "" + new Date().getTime();
 
     reminders.push({
@@ -104,7 +103,6 @@ function createReminder(title, date, time) {
 }
 
 function render() {
-    console.log('render()')
     upcomingDiv.innerHTML = ''
 
     reminders.forEach(function (reminder) {
@@ -130,7 +128,6 @@ function render() {
 
     todayReminders.forEach(function (todayReminder) {
         const oldReminderDiv = document.getElementById(todayReminder.id)
-        console.log(oldReminderDiv);
 
         const reminderDiv = document.createElement('div');
         reminderDiv.setAttribute('id', todayReminder.id);
@@ -145,7 +142,6 @@ function render() {
         reminderDiv.appendChild(deleteButton);
 
         if(oldReminderDiv != null) {
-            console.log('not null')
             if (oldReminderDiv.classList.contains('0notified')) {
                 reminderDiv.classList.add('0notified');
             }
@@ -163,7 +159,7 @@ function render() {
 
         newRemindersContainer.appendChild(reminderDiv);
         counter++;
-        console.log(counter + '/' + todayReminders.length);
+        //console.log(counter + '/' + todayReminders.length);
         if(counter === todayReminders.length) {
             todayContainer.innerHTML = '';
             todayContainer.appendChild(newRemindersContainer);
@@ -181,7 +177,6 @@ window.addEventListener('beforeunload', () => {
 })
 
 function deleteReminder(event) {
-    console.log('deleteReminder()')
     const deleteButton = event.target;
     const deleteId = deleteButton.id;
 
@@ -190,7 +185,6 @@ function deleteReminder(event) {
 };
 
 function removeReminder(deleteId) {
-    console.log('removeReminder()')
     reminders = reminders.filter(function (reminder) {
         if(reminder.id === deleteId) {
             return false;
@@ -213,7 +207,6 @@ function removeReminder(deleteId) {
 }
 
 function moveReminder(reminderId) {
-    console.log('moveReminder()')
     reminders = reminders.filter(function (reminder) {
         if(reminder.id === reminderId) {
             let dateAndTime = reminder.date + " " + reminder.time;
@@ -281,7 +274,7 @@ function notifyReminder() {
         let todayReminderDiv = document.getElementById(todayReminder.id);
 
         const notificationAudio = new Audio('./audio/reminder-notification.mp3');
-        notificationAudio.volume = 0.75;
+        notificationAudio.volume = 1;
 
         if(timeDifference < 1 && !todayReminderDiv.classList.contains("0notified")) {
             todayReminderDiv.classList.add("0notified");
@@ -316,12 +309,6 @@ function notifyReminder() {
 }
 document.addEventListener('DOMContentLoaded', notifyReminder)
 
-window.addEventListener('beforeunload', () => {
-    todayReminders.forEach((todayReminder) => {
-        removeNotification(todayReminder.id)
-    })
-})
-
 function removeNotification(pId) {
     window.remindersDiv.removeReminderP(pId)
 }
@@ -352,61 +339,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-
-// add settings for font size, volume, alwaysOnTop,
-// save to local .JSON file instead of localStorage (maybe)
-
-
-// Fix
-// notification sound playing when render is called. (should be fixed with classlist).
-// reminders refreshing (unsure if fixable, it is cleared from local storage)
-
-
-
-
-
-
-
-
-/* OLD
-function saveReminderClasses() {
-    let reminderClassNames = {};
-    let todayReminderClassNames = {};
-
-    reminders.forEach((reminder) => {
-        const reminderDiv = document.getElementById(reminder.id)
-        reminderClassNames[reminder.id] = reminderDiv.className;
-    })
-    console.log(reminderClassNames)
-    localStorage.setItem('reminderClasses', JSON.stringify(reminderClassNames));
-
-    todayReminders.forEach((todayReminder) => {
-        const todayReminderDiv = document.getElementById(todayReminder.id)
-        todayReminderClassNames[todayReminder.id] = todayReminderDiv.className;
-    })
-    console.log(todayReminderClassNames)
-    localStorage.setItem('todayReminderClasses', JSON.stringify(todayReminderClassNames));
-}
-
-function loadReminderClasses() {
-    let reminderClassNames = JSON.parse(localStorage.getItem('reminderClasses'));
-
-    console.log(reminderClassNames)
-
-    for(let i = 1; i < todayReminders.length; i++) {
-
-        todayReminders.forEach((todayReminder) => {
-
-            let TodayreminderClassNames = JSON.parse(localStorage.getItem('todayReminderClasses'))
-            console.log(TodayreminderClassNames);
-            
-            if(todayReminder.id == localStorage.key[i]) {
-                console.log(todayReminder.id);
-            }
-            
-        })
-
-    }
-}
-
-*/
+// save to local .JSON file instead of localStorage 

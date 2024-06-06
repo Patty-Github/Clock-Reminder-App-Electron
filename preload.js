@@ -18,3 +18,7 @@ contextBridge.exposeInMainWorld('remindersDiv', {
   removeReminderP: (pId) => ipcRenderer.send('remove-reminder-p', pId),
   onRemoveReminder: (callback) => ipcRenderer.on('remove-reminder-p-main', callback)
 })
+
+contextBridge.exposeInMainWorld('clockFontSizeChange', {
+  onFontChange: (callback) => {ipcRenderer.on('update-font-size', (_event, value) => callback(value))}
+})
