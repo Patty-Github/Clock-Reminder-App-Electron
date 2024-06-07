@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>Reminders</title>
+    <link rel="stylesheet" type="text/css" href="reminders.css">
+  </head>
+  <body>
+    <div id="container">
+      <div id="newFrame"><p>Reminders</p> <button id="minimizeBtn">-</button></div>
+        <h1>Reminders</h1>
+
+        <div id="createReminderContainer">
+            <input id="addReminder" placeholder="Add Reminder"> 
+            <input id="inputTime" placeholder="24:00" maxlength="4">
+            <input type="date" id="reminderDate" placeholder="xx/xx">
+            <button id="addReminderBtn">Add</button>
+        </div>
+
+        <div id="errorDiv"></div>
+
+        <h1>Within 24 Hours</h1>
+        <div id="todayContainer"></div>
+
+        <h1>Upcoming</h1>
+        <div id="upcomingContainer"></div>
+        <div id="reminderDiv"></div>
+    </div>
+
+    <script src="./reminders.js"></script>
+
+    <div class="remindersTextareaContainer">
+      <p id="textSavedStatus">Saved</p>
+      <textarea id="remindersTextareaId" class="remindersTextarea"></textarea>
+    </div>
+  </body>
+</html>

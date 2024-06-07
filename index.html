@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>Date and Time</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+  </head>
+  <body>
+    <div id="container">
+      <div id="topRow">
+        <div id="reminderNotificationDiv"></div>
+        <div id="infoDiv">
+          <p id="dateText">Date</p>
+          <p id="clockText">Time</p>
+        </div>
+      </div>
+      <button id="remindersBtn"></button>
+    </div>
+
+    <script src="./renderer.js"></script>
+  </body>
+</html>
