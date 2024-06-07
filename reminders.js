@@ -350,6 +350,3 @@ document.addEventListener('DOMContentLoaded', () => {
         saveTimeout = setTimeout(() => textSavedStatus.textContent = 'Saved', 10000)
     }
 });
-
-
-// save to local .JSON file instead of localStorage 

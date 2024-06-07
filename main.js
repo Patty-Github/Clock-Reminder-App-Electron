@@ -5,6 +5,7 @@ let mainDisplay = null;
 let win;
 let remindersWin;
 let isRemindersWinMinimized = true;
+let isRemindersWinClosed = false;
 
 const createWindow = () => {
     win = new BrowserWindow({
@@ -32,7 +33,7 @@ const createWindow = () => {
 
     //win.webContents.toggleDevTools(true);
   
-    win.loadFile(path.join(__dirname, 'index.html'));
+    win.loadFile('index.html')
 
     ipcMain.handle('ignore-mouse-events-true', () => {
       win.setIgnoreMouseEvents(true, { forward: true });
@@ -51,7 +52,7 @@ let tray;
 
 app.whenReady().then(() => {
 
-  tray = new Tray(path.join(__dirname, 'images/begtodiffer.jpeg'));
+  tray = new Tray('images/begtodiffer.jpeg')
   const contextMenu = Menu.buildFromTemplate([
     { label: '+1px', type: 'normal', click: () => {win.webContents.send('update-font-size', 1); tray.popUpContextMenu(contextMenu)}},
     { label: '-1px', type: 'normal', click: () => {win.webContents.send('update-font-size', -1); tray.popUpContextMenu(contextMenu)}},
@@ -109,18 +110,28 @@ const createRemindersWindow = () => {
 
   remindersWin.minimize();
 
-  remindersWin.loadFile(path.join(__dirname, 'reminders.html'));
+  remindersWin.loadFile('reminders.html');
+
+  remindersWin.on('closed', () => {
+    isRemindersWinClosed = true;
+  })
 }
 
+
 ipcMain.handle('create-reminders-window', () => {
-  if(isRemindersWinMinimized == true) {
-    //remindersWin.setSkipTaskbar(false);
+  if(isRemindersWinClosed) {
+    createRemindersWindow();
     remindersWin.restore();
-    isRemindersWinMinimized = false;
-  } else if(isRemindersWinMinimized == false) {
-    //remindersWin.setSkipTaskbar(true);
-    remindersWin.minimize();
-    isRemindersWinMinimized = true;
+  } else {
+    if(isRemindersWinMinimized == true) {
+      //remindersWin.setSkipTaskbar(false);
+      remindersWin.restore();
+      isRemindersWinMinimized = false;
+    } else if(isRemindersWinMinimized == false) {
+      //remindersWin.setSkipTaskbar(true);
+      remindersWin.minimize();
+      isRemindersWinMinimized = true;
+    }
   }
 })
 

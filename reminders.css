@@ -64,10 +64,10 @@ input:focus {
     background-color: transparent;
     -webkit-app-region: no-drag;
 }
-#newFrame button:hover {
+/*#newFrame button:hover {
     font-size: 40px;
     transition: all 0.05s ease;
-}
+}*/
 
 #createReminderContainer {
     display: flex;
