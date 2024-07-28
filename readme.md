@@ -1,4 +1,4 @@
-Code is a bit fucked but does the job. Started 24th May, finished 7th June.
+Started 24th May, finished 7th June.
 
 Clock is always ontop unless playing Exclusive Fullscreen game.
 Clock font size can be changed via tray.
